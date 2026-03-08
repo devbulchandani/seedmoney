@@ -11,5 +11,8 @@
     },
     "devDependencies": {
         "concurrently": "^8.2.2"
+    },
+    "dependencies": {
+        "piston-client": "^1.0.2"
     }
 }

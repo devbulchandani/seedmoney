@@ -3,6 +3,8 @@ import dotenv from 'dotenv';
 import Subject from './models/Subject';
 import Practical from './models/Practical';
 import Notes from './models/Notes';
+import PYQ from './models/PYQ';
+import Viva from './models/Viva';
 
 dotenv.config();
 
@@ -17,6 +19,8 @@ const seedData = async () => {
         await Subject.deleteMany({});
         await Practical.deleteMany({});
         await Notes.deleteMany({});
+        await PYQ.deleteMany({});
+        await Viva.deleteMany({});
 
         // 1. Data Structures
         const ds = await Subject.create({
@@ -35,8 +39,48 @@ const seedData = async () => {
 
         await Notes.create({
             subjectId: ds._id,
-            unit: 1,
-            content: 'Introduction to Data Structures. A data structure is a specialized format for organizing and storing data.'
+            title: 'Unit 1 - Introduction to Data Structures',
+            driveUrl: 'https://drive.google.com/file/d/sample-ds-unit1',
+            unit: 1
+        });
+
+        await PYQ.create({
+            subjectId: ds._id,
+            company: 'Google',
+            question: 'Implement a LRU Cache with O(1) operations',
+            type: 'code',
+            difficulty: 'Hard',
+            tags: ['Hash Map', 'Doubly Linked List', 'Design']
+        });
+
+        await PYQ.create({
+            subjectId: ds._id,
+            company: 'Amazon',
+            question: 'What is the time complexity of searching in a balanced BST?',
+            type: 'mcq',
+            difficulty: 'Easy',
+            tags: ['BST', 'Time Complexity'],
+            options: ['O(n)', 'O(log n)', 'O(n log n)', 'O(1)'],
+            correctAnswer: 1,
+            explanation: 'In a balanced BST, the height is log n, so search takes O(log n) time.'
+        });
+
+        await Viva.create({
+            subjectId: ds._id,
+            question: 'Which data structure uses LIFO (Last In First Out) principle?',
+            options: ['Queue', 'Stack', 'Array', 'Linked List'],
+            correctAnswer: 1,
+            explanation: 'Stack follows LIFO principle where the last element added is the first one to be removed.',
+            difficulty: 'Easy'
+        });
+
+        await Viva.create({
+            subjectId: ds._id,
+            question: 'What is the worst-case time complexity of Quick Sort?',
+            options: ['O(n)', 'O(n log n)', 'O(n²)', 'O(log n)'],
+            correctAnswer: 2,
+            explanation: 'Quick Sort has O(n²) worst-case complexity when the pivot is always the smallest or largest element.',
+            difficulty: 'Medium'
         });
 
         // 2. Database Management Systems
@@ -56,8 +100,44 @@ const seedData = async () => {
 
         await Notes.create({
             subjectId: dbms._id,
-            unit: 1,
-            content: 'Database architecture, 3-schema architecture, and data independence.'
+            title: 'Unit 1 - Database Architecture',
+            driveUrl: 'https://drive.google.com/file/d/sample-dbms-unit1',
+            unit: 1
+        });
+
+        await PYQ.create({
+            subjectId: dbms._id,
+            company: 'Amazon',
+            question: 'Design a database schema for an e-commerce platform',
+            type: 'code',
+            difficulty: 'Medium',
+            tags: ['Database Design', 'Normalization', 'ER Diagram']
+        });
+
+        await PYQ.create({
+            subjectId: dbms._id,
+            company: 'Oracle',
+            question: 'Which normal form eliminates transitive dependencies?',
+            type: 'mcq',
+            difficulty: 'Medium',
+            tags: ['Normalization', 'Database Theory'],
+            options: ['1NF', '2NF', '3NF', 'BCNF'],
+            correctAnswer: 2,
+            explanation: 'Third Normal Form (3NF) eliminates transitive dependencies.'
+        });
+
+        await Viva.create({
+            subjectId: dbms._id,
+            question: 'What does ACID stand for in database transactions?',
+            options: [
+                'Atomicity, Consistency, Isolation, Durability',
+                'Accuracy, Consistency, Integrity, Durability',
+                'Atomicity, Correctness, Isolation, Data',
+                'Accuracy, Completeness, Isolation, Durability'
+            ],
+            correctAnswer: 0,
+            explanation: 'ACID stands for Atomicity, Consistency, Isolation, and Durability.',
+            difficulty: 'Easy'
         });
 
         // 3. Operating Systems
@@ -77,8 +157,44 @@ const seedData = async () => {
 
         await Notes.create({
             subjectId: os._id,
-            unit: 2,
-            content: 'Process scheduling algorithms: FCFS, SJF, Round Robin.'
+            title: 'Unit 2 - Process Scheduling',
+            driveUrl: 'https://drive.google.com/file/d/sample-os-unit2',
+            unit: 2
+        });
+
+        await PYQ.create({
+            subjectId: os._id,
+            company: 'Microsoft',
+            question: 'Explain deadlock and how to prevent it in operating systems',
+            type: 'code',
+            difficulty: 'Medium',
+            tags: ['Deadlock', 'Concurrency', 'Resource Management']
+        });
+
+        await PYQ.create({
+            subjectId: os._id,
+            company: 'Intel',
+            question: 'Which scheduling algorithm can cause starvation?',
+            type: 'mcq',
+            difficulty: 'Medium',
+            tags: ['Scheduling', 'Process Management'],
+            options: ['Round Robin', 'FCFS', 'Priority Scheduling', 'SJF'],
+            correctAnswer: 2,
+            explanation: 'Priority Scheduling can cause starvation when high-priority processes keep arriving.'
+        });
+
+        await Viva.create({
+            subjectId: os._id,
+            question: 'What is a context switch?',
+            options: [
+                'Switching between user mode and kernel mode',
+                'Switching from one process to another',
+                'Switching between threads',
+                'Switching between memory pages'
+            ],
+            correctAnswer: 1,
+            explanation: 'Context switch is the process of storing and restoring the state of a process so that execution can be resumed later.',
+            difficulty: 'Easy'
         });
 
         // 4. Computer Networks
@@ -98,8 +214,39 @@ const seedData = async () => {
 
         await Notes.create({
             subjectId: cn._id,
-            unit: 1,
-            content: 'Physical Layer: Transmission media, signaling, and multiplexing.'
+            title: 'Unit 1 - Physical Layer',
+            driveUrl: 'https://drive.google.com/file/d/sample-cn-unit1',
+            unit: 1
+        });
+
+        await PYQ.create({
+            subjectId: cn._id,
+            company: 'Cisco',
+            question: 'Explain TCP 3-way handshake and its importance',
+            type: 'code',
+            difficulty: 'Easy',
+            tags: ['TCP/IP', 'Networking', 'Protocols']
+        });
+
+        await PYQ.create({
+            subjectId: cn._id,
+            company: 'Juniper',
+            question: 'Which layer of OSI model is responsible for routing?',
+            type: 'mcq',
+            difficulty: 'Easy',
+            tags: ['OSI Model', 'Networking'],
+            options: ['Data Link Layer', 'Network Layer', 'Transport Layer', 'Session Layer'],
+            correctAnswer: 1,
+            explanation: 'The Network Layer (Layer 3) is responsible for routing packets across networks.'
+        });
+
+        await Viva.create({
+            subjectId: cn._id,
+            question: 'What is the default subnet mask for a Class C network?',
+            options: ['255.0.0.0', '255.255.0.0', '255.255.255.0', '255.255.255.255'],
+            correctAnswer: 2,
+            explanation: 'Class C networks use 255.255.255.0 as the default subnet mask.',
+            difficulty: 'Easy'
         });
 
         // 5. Software Engineering
@@ -119,8 +266,44 @@ const seedData = async () => {
 
         await Notes.create({
             subjectId: se._id,
-            unit: 3,
-            content: 'Agile methodologies: Scrum roles, sprint planning, and retrospectives.'
+            title: 'Unit 3 - Agile Methodologies',
+            driveUrl: 'https://drive.google.com/file/d/sample-se-unit3',
+            unit: 3
+        });
+
+        await PYQ.create({
+            subjectId: se._id,
+            company: 'Atlassian',
+            question: 'What are the key differences between Agile and Waterfall methodologies?',
+            type: 'code',
+            difficulty: 'Easy',
+            tags: ['SDLC', 'Agile', 'Waterfall']
+        });
+
+        await PYQ.create({
+            subjectId: se._id,
+            company: 'Thoughtworks',
+            question: 'Which testing technique is used to test individual units of code?',
+            type: 'mcq',
+            difficulty: 'Easy',
+            tags: ['Testing', 'Software Quality'],
+            options: ['Integration Testing', 'Unit Testing', 'System Testing', 'Acceptance Testing'],
+            correctAnswer: 1,
+            explanation: 'Unit Testing focuses on testing individual units or components of the software.'
+        });
+
+        await Viva.create({
+            subjectId: se._id,
+            question: 'What does CI/CD stand for?',
+            options: [
+                'Continuous Integration/Continuous Deployment',
+                'Code Integration/Code Deployment',
+                'Continuous Improvement/Continuous Development',
+                'Central Integration/Central Deployment'
+            ],
+            correctAnswer: 0,
+            explanation: 'CI/CD stands for Continuous Integration and Continuous Deployment/Delivery.',
+            difficulty: 'Easy'
         });
 
         console.log('Database seeded successfully with 5 sample subjects!');

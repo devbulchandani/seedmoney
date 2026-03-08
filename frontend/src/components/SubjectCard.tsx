@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { BookOpen, Layers } from 'lucide-react';
+import { BookOpen, Clock, GraduationCap } from 'lucide-react';
 
 interface SubjectCardProps {
     id: string;
@@ -11,35 +11,44 @@ interface SubjectCardProps {
 
 const SubjectCard = ({ id, name, semester, courses, description }: SubjectCardProps) => {
     return (
-        <Link to={`/subjects/${id}`} className="block h-full cursor-pointer">
-            <div className="card p-6 flex flex-col h-full bg-white group">
-                <div className="flex items-start justify-between mb-4">
-                    <div className="p-3 bg-blue-50 text-blue-600 rounded-lg group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
-                        <BookOpen size={24} />
-                    </div>
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                        Semester {semester}
+        <Link
+            to={`/subjects/${id}`}
+            className="block bg-white rounded-2xl shadow-sm border border-gray-200 p-6 hover:shadow-lg hover:border-blue-300 transition-all duration-300 group"
+        >
+            <div className="flex items-start gap-4 mb-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                    <BookOpen className="w-6 h-6 text-white" />
+                </div>
+                <div className="flex-1 min-w-0">
+                    <h2 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
+                        {name}
+                    </h2>
+                    <p className="text-gray-600 text-sm leading-relaxed line-clamp-2">
+                        {description}
+                    </p>
+                </div>
+            </div>
+
+            <div className="flex items-center gap-3 mb-4">
+                <div className="flex items-center text-sm font-medium text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg">
+                    <Clock size={14} className="mr-1.5 text-blue-600" />
+                    Sem {semester}
+                </div>
+                <div className="flex items-center text-sm font-medium text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg">
+                    <GraduationCap size={14} className="mr-1.5 text-purple-600" />
+                    {courses.length} {courses.length === 1 ? 'Course' : 'Courses'}
+                </div>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+                {courses.map((course, idx) => (
+                    <span
+                        key={idx}
+                        className="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-semibold rounded-full border border-blue-200"
+                    >
+                        {course}
                     </span>
-                </div>
-
-                <h3 className="text-xl font-bold text-gray-900 mb-2 truncate" title={name}>
-                    {name}
-                </h3>
-
-                <p className="text-gray-500 text-sm mb-4 line-clamp-2 flex-grow">
-                    {description}
-                </p>
-
-                <div className="flex items-center gap-2 mt-auto">
-                    <Layers size={16} className="text-gray-400" />
-                    <div className="flex flex-wrap gap-1">
-                        {courses.map((course, idx) => (
-                            <span key={idx} className="text-xs text-gray-500 font-medium">
-                                {course}{idx < courses.length - 1 ? ',' : ''}
-                            </span>
-                        ))}
-                    </div>
-                </div>
+                ))}
             </div>
         </Link>
     );
