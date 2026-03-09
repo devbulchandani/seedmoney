@@ -4,11 +4,12 @@ import clsx from 'clsx';
 
 interface VivaCardProps {
     id: string;
+    subjectId: string;
     question: string;
     difficulty: 'Easy' | 'Medium' | 'Hard';
 }
 
-const VivaCard = ({ id, question, difficulty }: VivaCardProps) => {
+const VivaCard = ({ id, subjectId, question, difficulty }: VivaCardProps) => {
     const difficultyColors = {
         Easy: 'bg-green-100 text-green-700 border-green-200',
         Medium: 'bg-amber-100 text-amber-700 border-amber-200',
@@ -17,13 +18,13 @@ const VivaCard = ({ id, question, difficulty }: VivaCardProps) => {
 
     return (
         <Link
-            to={`/mcq/${id}?type=viva`}
+            to={`/mcq/${id}?type=viva&subjectId=${subjectId}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="block bg-white rounded-2xl shadow-sm border border-gray-200 p-6 hover:shadow-lg hover:border-indigo-300 transition-all group"
+            className="block bg-white rounded-2xl shadow-sm border border-gray-200 p-6 hover:shadow-lg hover:border-blue-400 transition-all group"
         >
             <div className="flex items-start gap-4">
-                <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-blue-700 transition-colors">
                     <MessageCircleQuestion className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex-1">
@@ -34,7 +35,7 @@ const VivaCard = ({ id, question, difficulty }: VivaCardProps) => {
                         )}>
                             {difficulty}
                         </span>
-                        <span className="px-3 py-1 text-xs font-bold rounded-full border bg-indigo-100 text-indigo-700 border-indigo-200">
+                        <span className="px-3 py-1 text-xs font-bold rounded-full border bg-blue-100 text-blue-700 border-blue-200">
                             MCQ
                         </span>
                     </div>

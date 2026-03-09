@@ -11,7 +11,7 @@ const LANGUAGE_MAP: Record<string, { lang: string; version: string }> = {
     'c': { lang: 'c', version: '10.2.0' },
     'cpp': { lang: 'cpp', version: '10.2.0' },
     'c++': { lang: 'cpp', version: '10.2.0' },
-    'node': { lang: 'node', version: '18.15.0' },
+    'node': { lang: 'javascript', version: '18.15.0' },
     'sqlite3': { lang: 'sqlite3', version: '3.36.0' },
 };
 
@@ -21,7 +21,7 @@ const getFileName = (language: string): string => {
         case 'c': return 'main.c';
         case 'cpp':
         case 'c++': return 'main.cpp';
-        default: return 'index'; // Python/Node don't strictly care
+        default: return 'index'; 
     }
 };
 

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { useParams, useLocation, Link } from 'react-router-dom';
+import { useParams, useLocation, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { ArrowLeft, Loader2, CheckCircle2, XCircle, Lightbulb } from 'lucide-react';
+import { ArrowLeft, Loader2, CheckCircle2, XCircle, Lightbulb, ChevronLeft, ChevronRight } from 'lucide-react';
 import clsx from 'clsx';
 
 interface MCQData {
@@ -13,26 +13,54 @@ interface MCQData {
     difficulty?: 'Easy' | 'Medium' | 'Hard';
     company?: string;
     tags?: string[];
+    subjectId?: string;
 }
 
 const MCQPage = () => {
     const { id } = useParams<{ id: string }>();
     const location = useLocation();
-    const type = new URLSearchParams(location.search).get('type') || 'pyq';
+    const navigate = useNavigate();
+    const searchParams = new URLSearchParams(location.search);
+    const type = searchParams.get('type') || 'pyq';
+    const subjectId = searchParams.get('subjectId');
     
     const [mcq, setMcq] = useState<MCQData | null>(null);
+    const [allQuestions, setAllQuestions] = useState<any[]>([]);
+    const [currentIndex, setCurrentIndex] = useState(0);
     const [loading, setLoading] = useState(true);
     const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
     const [submitted, setSubmitted] = useState(false);
 
     useEffect(() => {
-        const fetchMCQ = async () => {
+        const fetchData = async () => {
             try {
+                setLoading(true);
+                
+                // Fetch current question
                 const endpoint = type === 'viva' 
                     ? `http://localhost:5001/api/subjects/viva/${id}`
                     : `http://localhost:5001/api/subjects/pyq/${id}`;
                 const response = await axios.get(endpoint);
                 setMcq(response.data);
+                
+                // Fetch all questions of this type for navigation
+                if (response.data.subjectId || subjectId) {
+                    const sid = response.data.subjectId || subjectId;
+                    const listEndpoint = type === 'viva'
+                        ? `http://localhost:5001/api/subjects/${sid}/vivas`
+                        : `http://localhost:5001/api/subjects/${sid}/pyqs`;
+                    const listResponse = await axios.get(listEndpoint);
+                    
+                    let questions = listResponse.data;
+                    // For PYQs, filter only MCQ type
+                    if (type === 'pyq') {
+                        questions = questions.filter((q: any) => q.type === 'mcq');
+                    }
+                    
+                    setAllQuestions(questions);
+                    const index = questions.findIndex((q: any) => q._id === id);
+                    setCurrentIndex(index >= 0 ? index : 0);
+                }
             } catch (err) {
                 console.error(err);
             } finally {
@@ -41,9 +69,29 @@ const MCQPage = () => {
         };
 
         if (id) {
-            fetchMCQ();
+            fetchData();
         }
-    }, [id, type]);
+    }, [id, type, subjectId]);
+
+    const handleNext = () => {
+        if (currentIndex < allQuestions.length - 1) {
+            const nextQuestion = allQuestions[currentIndex + 1];
+            const sid = mcq?.subjectId || subjectId;
+            navigate(`/mcq/${nextQuestion._id}?type=${type}${sid ? `&subjectId=${sid}` : ''}`);
+            setSelectedAnswer(null);
+            setSubmitted(false);
+        }
+    };
+
+    const handlePrevious = () => {
+        if (currentIndex > 0) {
+            const prevQuestion = allQuestions[currentIndex - 1];
+            const sid = mcq?.subjectId || subjectId;
+            navigate(`/mcq/${prevQuestion._id}?type=${type}${sid ? `&subjectId=${sid}` : ''}`);
+            setSelectedAnswer(null);
+            setSubmitted(false);
+        }
+    };
 
     const handleSubmit = () => {
         if (selectedAnswer !== null) {
@@ -99,29 +147,29 @@ const MCQPage = () => {
 
                 <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
                     {/* Header */}
-                    <div className="bg-gradient-to-r from-purple-500 to-pink-600 p-6 text-white">
+                    <div className="bg-blue-600 p-6 text-white">
                         <div className="flex items-center justify-between mb-4">
                             <h1 className="text-2xl font-bold">
                                 {type === 'viva' ? 'Viva Question' : 'Interview Question'}
                             </h1>
                             {mcq.difficulty && (
                                 <span className={clsx(
-                                    'px-4 py-1.5 text-sm font-bold rounded-full border-2 border-white/30',
-                                    'bg-white/20 text-white'
+                                    'px-4 py-1.5 text-sm font-bold rounded-full',
+                                    difficultyColors[mcq.difficulty]
                                 )}>
                                     {mcq.difficulty}
                                 </span>
                             )}
                         </div>
                         {mcq.company && (
-                            <p className="text-purple-100 font-medium">Company: {mcq.company}</p>
+                            <p className="text-blue-100 font-medium">Company: {mcq.company}</p>
                         )}
                         {mcq.tags && mcq.tags.length > 0 && (
                             <div className="flex flex-wrap gap-2 mt-3">
                                 {mcq.tags.map((tag, idx) => (
                                     <span
                                         key={idx}
-                                        className="px-3 py-1 bg-white/20 text-white text-xs font-medium rounded-full border border-white/30"
+                                        className="px-3 py-1 bg-blue-700 text-blue-100 text-xs font-medium rounded-full border border-blue-500"
                                     >
                                         {tag}
                                     </span>
@@ -191,29 +239,72 @@ const MCQPage = () => {
                         </div>
 
                         {/* Action Buttons */}
-                        <div className="flex gap-3">
-                            {!submitted ? (
-                                <button
-                                    onClick={handleSubmit}
-                                    disabled={selectedAnswer === null}
-                                    className={clsx(
-                                        'px-6 py-3 rounded-lg font-semibold transition-all',
-                                        selectedAnswer !== null
-                                            ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 shadow-lg'
-                                            : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                                    )}
-                                >
-                                    Submit Answer
-                                </button>
-                            ) : (
-                                <button
-                                    onClick={handleReset}
-                                    className="px-6 py-3 bg-gray-600 text-white rounded-lg font-semibold hover:bg-gray-700 transition-all"
-                                >
-                                    Try Again
-                                </button>
+                        <div className="flex items-center justify-between gap-3">
+                            <div className="flex gap-3">
+                                {!submitted ? (
+                                    <button
+                                        onClick={handleSubmit}
+                                        disabled={selectedAnswer === null}
+                                        className={clsx(
+                                            'px-6 py-3 rounded-lg font-semibold transition-all',
+                                            selectedAnswer !== null
+                                                ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg'
+                                                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                                        )}
+                                    >
+                                        Submit Answer
+                                    </button>
+                                ) : (
+                                    <button
+                                        onClick={handleReset}
+                                        className="px-6 py-3 bg-gray-600 text-white rounded-lg font-semibold hover:bg-gray-700 transition-all"
+                                    >
+                                        Try Again
+                                    </button>
+                                )}
+                            </div>
+
+                            {/* Navigation Buttons */}
+                            {allQuestions.length > 1 && (
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={handlePrevious}
+                                        disabled={currentIndex === 0}
+                                        className={clsx(
+                                            'px-4 py-3 rounded-lg font-semibold transition-all flex items-center gap-2',
+                                            currentIndex === 0
+                                                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                        )}
+                                        title="Previous Question"
+                                    >
+                                        <ChevronLeft size={20} />
+                                        Previous
+                                    </button>
+                                    <button
+                                        onClick={handleNext}
+                                        disabled={currentIndex === allQuestions.length - 1}
+                                        className={clsx(
+                                            'px-4 py-3 rounded-lg font-semibold transition-all flex items-center gap-2',
+                                            currentIndex === allQuestions.length - 1
+                                                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                        )}
+                                        title="Next Question"
+                                    >
+                                        Next
+                                        <ChevronRight size={20} />
+                                    </button>
+                                </div>
                             )}
                         </div>
+
+                        {/* Question Counter */}
+                        {allQuestions.length > 1 && (
+                            <div className="mt-4 text-sm text-gray-500 text-center">
+                                Question {currentIndex + 1} of {allQuestions.length}
+                            </div>
+                        )}
 
                         {/* Result */}
                         {submitted && (

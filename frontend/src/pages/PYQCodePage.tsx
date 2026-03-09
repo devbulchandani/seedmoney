@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { ArrowLeft, Loader2, Code2, FileText, Building2 } from 'lucide-react';
+import { ArrowLeft, Loader2, Code2, FileText, Building2, ChevronLeft, ChevronRight } from 'lucide-react';
 import CodeEditor from '../components/CodeEditor';
+import clsx from 'clsx';
 
 interface PYQData {
     _id: string;
@@ -10,18 +11,37 @@ interface PYQData {
     question: string;
     difficulty: 'Easy' | 'Medium' | 'Hard';
     tags: string[];
+    subjectId: string;
 }
 
 const PYQCodePage = () => {
     const { id } = useParams<{ id: string }>();
+    const location = useLocation();
+    const navigate = useNavigate();
+    const searchParams = new URLSearchParams(location.search);
+    const subjectId = searchParams.get('subjectId');
+    
     const [pyq, setPyq] = useState<PYQData | null>(null);
+    const [allPyqs, setAllPyqs] = useState<any[]>([]);
+    const [currentIndex, setCurrentIndex] = useState(0);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchPYQ = async () => {
+        const fetchData = async () => {
             try {
+                setLoading(true);
                 const response = await axios.get(`http://localhost:5001/api/subjects/pyq/${id}`);
                 setPyq(response.data);
+                
+                // Fetch all coding PYQs for navigation
+                if (response.data.subjectId || subjectId) {
+                    const sid = response.data.subjectId || subjectId;
+                    const listResponse = await axios.get(`http://localhost:5001/api/subjects/${sid}/pyqs`);
+                    const codingPyqs = listResponse.data.filter((q: any) => q.type === 'code');
+                    setAllPyqs(codingPyqs);
+                    const index = codingPyqs.findIndex((q: any) => q._id === id);
+                    setCurrentIndex(index >= 0 ? index : 0);
+                }
             } catch (err) {
                 console.error(err);
             } finally {
@@ -30,9 +50,25 @@ const PYQCodePage = () => {
         };
 
         if (id) {
-            fetchPYQ();
+            fetchData();
         }
-    }, [id]);
+    }, [id, subjectId]);
+
+    const handleNext = () => {
+        if (currentIndex < allPyqs.length - 1) {
+            const nextPyq = allPyqs[currentIndex + 1];
+            const sid = pyq?.subjectId || subjectId;
+            navigate(`/pyq-code/${nextPyq._id}${sid ? `?subjectId=${sid}` : ''}`);
+        }
+    };
+
+    const handlePrevious = () => {
+        if (currentIndex > 0) {
+            const prevPyq = allPyqs[currentIndex - 1];
+            const sid = pyq?.subjectId || subjectId;
+            navigate(`/pyq-code/${prevPyq._id}${sid ? `?subjectId=${sid}` : ''}`);
+        }
+    };
 
     if (loading) {
         return (
@@ -75,7 +111,7 @@ const PYQCodePage = () => {
                             <ArrowLeft className="w-5 h-5 text-gray-600" />
                         </Link>
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center">
+                            <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
                                 <Code2 className="w-6 h-6 text-white" />
                             </div>
                             <div>
@@ -98,9 +134,9 @@ const PYQCodePage = () => {
                         </div>
 
                         <div className="mb-6 flex items-center gap-3 flex-wrap">
-                            <div className="flex items-center gap-2 bg-purple-50 px-4 py-2 rounded-lg border border-purple-200">
-                                <Building2 className="w-4 h-4 text-purple-600" />
-                                <span className="font-semibold text-purple-900">{pyq.company}</span>
+                            <div className="flex items-center gap-2 bg-blue-50 px-4 py-2 rounded-lg border border-blue-200">
+                                <Building2 className="w-4 h-4 text-blue-600" />
+                                <span className="font-semibold text-blue-900">{pyq.company}</span>
                             </div>
                             <span className={`px-4 py-2 text-sm font-bold rounded-lg border ${difficultyColors[pyq.difficulty]}`}>
                                 {pyq.difficulty}
@@ -108,7 +144,7 @@ const PYQCodePage = () => {
                         </div>
 
                         <div className="prose prose-lg max-w-none">
-                            <div className="bg-purple-50 border-l-4 border-purple-500 p-6 rounded-r-lg mb-8">
+                            <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-lg mb-8">
                                 <p className="text-gray-800 leading-relaxed whitespace-pre-wrap">
                                     {pyq.question}
                                 </p>
@@ -123,7 +159,7 @@ const PYQCodePage = () => {
                                     {pyq.tags.map((tag, idx) => (
                                         <span
                                             key={idx}
-                                            className="px-3 py-1 bg-purple-50 text-purple-700 text-sm font-medium rounded-full border border-purple-200"
+                                            className="px-3 py-1 bg-blue-50 text-blue-700 text-sm font-medium rounded-full border border-blue-200"
                                         >
                                             {tag}
                                         </span>
@@ -142,6 +178,43 @@ const PYQCodePage = () => {
                                 <li>• Test with multiple inputs</li>
                             </ul>
                         </div>
+
+                        {/* Navigation Buttons */}
+                        {allPyqs.length > 1 && (
+                            <div className="mt-8 pt-6 border-t border-gray-200">
+                                <div className="flex items-center justify-between">
+                                    <button
+                                        onClick={handlePrevious}
+                                        disabled={currentIndex === 0}
+                                        className={clsx(
+                                            'px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2',
+                                            currentIndex === 0
+                                                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                        )}
+                                    >
+                                        <ChevronLeft size={20} />
+                                        Previous Question
+                                    </button>
+                                    <span className="text-sm text-gray-500">
+                                        {currentIndex + 1} of {allPyqs.length}
+                                    </span>
+                                    <button
+                                        onClick={handleNext}
+                                        disabled={currentIndex === allPyqs.length - 1}
+                                        className={clsx(
+                                            'px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2',
+                                            currentIndex === allPyqs.length - 1
+                                                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                        )}
+                                    >
+                                        Next Question
+                                        <ChevronRight size={20} />
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
 

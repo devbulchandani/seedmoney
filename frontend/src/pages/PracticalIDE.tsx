@@ -1,27 +1,46 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { ArrowLeft, Loader2, Code2, FileText } from 'lucide-react';
+import { ArrowLeft, Loader2, Code2, FileText, ChevronLeft, ChevronRight } from 'lucide-react';
 import CodeEditor from '../components/CodeEditor';
+import clsx from 'clsx';
 
 interface Practical {
     _id: string;
     title: string;
     problemStatement: string;
     solution: string;
+    subjectId: string;
 }
 
 const PracticalIDE = () => {
     const { id } = useParams<{ id: string }>();
+    const location = useLocation();
+    const navigate = useNavigate();
+    const searchParams = new URLSearchParams(location.search);
+    const subjectId = searchParams.get('subjectId');
+    
     const [practical, setPractical] = useState<Practical | null>(null);
+    const [allPracticals, setAllPracticals] = useState<any[]>([]);
+    const [currentIndex, setCurrentIndex] = useState(0);
     const [loading, setLoading] = useState(true);
     const [showSolution, setShowSolution] = useState(false);
 
     useEffect(() => {
-        const fetchPractical = async () => {
+        const fetchData = async () => {
             try {
+                setLoading(true);
                 const response = await axios.get(`http://localhost:5001/api/subjects/practical/${id}`);
                 setPractical(response.data);
+                
+                // Fetch all practicals for navigation
+                if (response.data.subjectId || subjectId) {
+                    const sid = response.data.subjectId || subjectId;
+                    const listResponse = await axios.get(`http://localhost:5001/api/subjects/${sid}/practicals`);
+                    setAllPracticals(listResponse.data);
+                    const index = listResponse.data.findIndex((p: any) => p._id === id);
+                    setCurrentIndex(index >= 0 ? index : 0);
+                }
             } catch (err) {
                 console.error(err);
             } finally {
@@ -30,9 +49,27 @@ const PracticalIDE = () => {
         };
 
         if (id) {
-            fetchPractical();
+            fetchData();
         }
-    }, [id]);
+    }, [id, subjectId]);
+
+    const handleNext = () => {
+        if (currentIndex < allPracticals.length - 1) {
+            const nextPractical = allPracticals[currentIndex + 1];
+            const sid = practical?.subjectId || subjectId;
+            navigate(`/practical/${nextPractical._id}${sid ? `?subjectId=${sid}` : ''}`);
+            setShowSolution(false);
+        }
+    };
+
+    const handlePrevious = () => {
+        if (currentIndex > 0) {
+            const prevPractical = allPracticals[currentIndex - 1];
+            const sid = practical?.subjectId || subjectId;
+            navigate(`/practical/${prevPractical._id}${sid ? `?subjectId=${sid}` : ''}`);
+            setShowSolution(false);
+        }
+    };
 
     if (loading) {
         return (
@@ -69,7 +106,7 @@ const PracticalIDE = () => {
                             <ArrowLeft className="w-5 h-5 text-gray-600" />
                         </Link>
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                            <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
                                 <Code2 className="w-6 h-6 text-white" />
                             </div>
                             <div>
@@ -103,7 +140,7 @@ const PracticalIDE = () => {
                         <div className="mt-8 border-t border-gray-200 pt-8">
                             <button
                                 onClick={() => setShowSolution(!showSolution)}
-                                className="mb-4 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all font-medium shadow-sm"
+                                className="mb-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all font-medium shadow-sm"
                             >
                                 {showSolution ? 'Hide Solution' : 'Show Solution'}
                             </button>
@@ -128,6 +165,43 @@ const PracticalIDE = () => {
                                 <li>• Use the solution as a reference if you're stuck</li>
                             </ul>
                         </div>
+
+                        {/* Navigation Buttons */}
+                        {allPracticals.length > 1 && (
+                            <div className="mt-8 pt-6 border-t border-gray-200">
+                                <div className="flex items-center justify-between">
+                                    <button
+                                        onClick={handlePrevious}
+                                        disabled={currentIndex === 0}
+                                        className={clsx(
+                                            'px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2',
+                                            currentIndex === 0
+                                                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                        )}
+                                    >
+                                        <ChevronLeft size={20} />
+                                        Previous Practical
+                                    </button>
+                                    <span className="text-sm text-gray-500">
+                                        {currentIndex + 1} of {allPracticals.length}
+                                    </span>
+                                    <button
+                                        onClick={handleNext}
+                                        disabled={currentIndex === allPracticals.length - 1}
+                                        className={clsx(
+                                            'px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2',
+                                            currentIndex === allPracticals.length - 1
+                                                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                        )}
+                                    >
+                                        Next Practical
+                                        <ChevronRight size={20} />
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
 

@@ -112,9 +112,9 @@ const SubjectDetails = () => {
                 <ArrowLeft size={16} className="mr-2 group-hover:-translate-x-1 transition-transform" /> Back to Dashboard
             </Link>
 
-            <div className="mb-10 bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-8 border border-blue-100 shadow-sm">
+            <div className="mb-10 bg-blue-50 rounded-2xl p-8 border border-blue-100 shadow-sm">
                 <div className="flex items-start gap-4 mb-4">
-                    <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-600 text-white rounded-xl flex items-center justify-center shadow-lg">
+                    <div className="w-14 h-14 bg-blue-600 text-white rounded-xl flex items-center justify-center shadow-md">
                         <BookOpen size={28} />
                     </div>
                     <div className="flex-1">
@@ -126,12 +126,12 @@ const SubjectDetails = () => {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3 mt-6">
-                    <div className="flex items-center text-sm font-medium text-gray-700 bg-white/80 backdrop-blur-sm border border-gray-200 px-4 py-2 rounded-lg shadow-sm">
+                    <div className="flex items-center text-sm font-medium text-gray-700 bg-white border border-gray-200 px-4 py-2 rounded-lg shadow-sm">
                         <Clock size={16} className="mr-2 text-blue-600" />
                         Semester {subject.semester}
                     </div>
                     {subject.courses.map((course, idx) => (
-                        <span key={idx} className="bg-white/80 backdrop-blur-sm text-gray-800 px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 shadow-sm">
+                        <span key={idx} className="bg-white text-gray-800 px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 shadow-sm">
                             {course}
                         </span>
                     ))}
@@ -199,6 +199,7 @@ const SubjectDetails = () => {
                                 <PracticalCard
                                     key={practical._id}
                                     id={practical._id}
+                                    subjectId={id!}
                                     title={practical.title}
                                     problemStatement={practical.problemStatement}
                                     solution={practical.solution}
@@ -238,6 +239,7 @@ const SubjectDetails = () => {
                                 <PYQCard
                                     key={pyq._id}
                                     id={pyq._id}
+                                    subjectId={id!}
                                     company={pyq.company}
                                     question={pyq.question}
                                     type={pyq.type}
@@ -260,6 +262,7 @@ const SubjectDetails = () => {
                                 <VivaCard
                                     key={viva._id}
                                     id={viva._id}
+                                    subjectId={id!}
                                     question={viva.question}
                                     difficulty={viva.difficulty}
                                 />
