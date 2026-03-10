@@ -4,6 +4,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import subjectRoutes from './routes/subjects';
 import executeRoutes from './routes/execute';
+import testRoutes from './routes/tests';
 
 dotenv.config();
 
@@ -17,6 +18,7 @@ app.use(express.json());
 // Routes
 app.use('/api/subjects', subjectRoutes);
 app.use('/api/execute', executeRoutes);
+app.use('/api/tests', testRoutes);
 
 // Database Connection
 mongoose

@@ -17,6 +17,20 @@ const Navbar = () => {
                             <p className="text-xs text-gray-500 font-medium">Academic Platform</p>
                         </div>
                     </Link>
+                    <div className="flex items-center gap-6">
+                        <Link 
+                            to="/" 
+                            className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                        >
+                            Subjects
+                        </Link>
+                        <Link 
+                            to="/tests" 
+                            className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                        >
+                            Tests
+                        </Link>
+                    </div>
                 </div>
             </div>
         </nav>

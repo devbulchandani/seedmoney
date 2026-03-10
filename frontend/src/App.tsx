@@ -5,6 +5,8 @@ import SubjectDetails from './pages/SubjectDetails';
 import PracticalIDE from './pages/PracticalIDE';
 import PYQCodePage from './pages/PYQCodePage';
 import MCQPage from './pages/MCQPage';
+import Tests from './pages/Tests';
+import TakeTest from './pages/TakeTest';
 
 const App = () => {
   return (
@@ -13,6 +15,7 @@ const App = () => {
         <Route path="/practical/:id" element={<PracticalIDE />} />
         <Route path="/pyq-code/:id" element={<PYQCodePage />} />
         <Route path="/mcq/:id" element={<MCQPage />} />
+        <Route path="/test/:id" element={<TakeTest />} />
         <Route path="*" element={
           <div className="min-h-screen bg-gray-50 flex flex-col">
             <Navbar />
@@ -20,6 +23,7 @@ const App = () => {
               <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/subjects/:id" element={<SubjectDetails />} />
+                <Route path="/tests" element={<Tests />} />
               </Routes>
             </main>
           </div>

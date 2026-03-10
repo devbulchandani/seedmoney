@@ -5,6 +5,7 @@ import Practical from './models/Practical';
 import Notes from './models/Notes';
 import PYQ from './models/PYQ';
 import Viva from './models/Viva';
+import Test from './models/Test';
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ const seedData = async () => {
         await Notes.deleteMany({});
         await PYQ.deleteMany({});
         await Viva.deleteMany({});
+        await Test.deleteMany({});
 
         console.log('Creating 10 subjects with comprehensive data...');
         
@@ -285,12 +287,55 @@ const seedData = async () => {
         ]);
         await Notes.create({ subjectId: cyber._id, title: 'Unit 1 - Security Fundamentals', driveUrl: 'https://drive.google.com/file/d/cyber-unit1', unit: 1 });
 
+        // Create Tests for each subject
+        console.log('Creating tests...');
+        
+        for (const subject of subjects) {
+            // Create 2 tests per subject
+            await Test.create({
+                subjectId: subject._id,
+                title: `${subject.name} - Quick Quiz`,
+                description: 'Test your knowledge with this quick 10-question quiz',
+                duration: 15,
+                totalQuestions: 10,
+                difficulty: 'Easy',
+                questions: [
+                    { question: 'Sample question 1 for quick understanding', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 0 },
+                    { question: 'Sample question 2 for basic concepts', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 1 },
+                    { question: 'Sample question 3 for fundamentals', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 2 },
+                    { question: 'Sample question 4 for core topics', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 3 },
+                    { question: 'Sample question 5 for key concepts', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 0 },
+                    { question: 'Sample question 6 for important topics', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 1 },
+                    { question: 'Sample question 7 for essential knowledge', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 2 },
+                    { question: 'Sample question 8 for basic understanding', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 3 },
+                    { question: 'Sample question 9 for quick revision', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 0 },
+                    { question: 'Sample question 10 for practice', options: ['Option A', 'Option B', 'Option C', 'Option D'], correctAnswer: 1 }
+                ]
+            });
+
+            await Test.create({
+                subjectId: subject._id,
+                title: `${subject.name} - Comprehensive Test`,
+                description: 'In-depth test covering all major topics',
+                duration: 30,
+                totalQuestions: 20,
+                difficulty: 'Mixed',
+                questions: Array.from({ length: 20 }, (_, i) => ({
+                    question: `Comprehensive question ${i + 1} covering advanced topics`,
+                    options: ['Option A', 'Option B', 'Option C', 'Option D'],
+                    correctAnswer: i % 4
+                }))
+            });
+        }
+
         console.log(`✅ Successfully seeded ${subjects.length} subjects!`);
         console.log('📚 Each subject has:');
         console.log('   - 5 Practicals');
         console.log('   - 5 PYQs (mix of MCQ and Coding)');
         console.log('   - 5 Viva Questions');
         console.log('   - 1 Notes resource');
+        console.log('   - 2 Timed Tests');
+        console.log(`📝 Total tests created: ${subjects.length * 2}`);
         
         process.exit(0);
     } catch (error) {
