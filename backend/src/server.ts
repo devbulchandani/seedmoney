@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import subjectRoutes from './routes/subjects';
 import executeRoutes from './routes/execute';
 import testRoutes from './routes/tests';
+import questionRoutes from './routes/questions';
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use('/api/subjects', subjectRoutes);
 app.use('/api/execute', executeRoutes);
 app.use('/api/tests', testRoutes);
+app.use('/api/questions', questionRoutes);
 
 // Database Connection
 mongoose

@@ -7,11 +7,7 @@ export interface ITest extends Document {
     duration: number; // in minutes
     totalQuestions: number;
     difficulty: 'Easy' | 'Medium' | 'Hard' | 'Mixed';
-    questions: {
-        question: string;
-        options: string[];
-        correctAnswer: number;
-    }[];
+    questions: mongoose.Types.ObjectId[]; // References to Question model
 }
 
 const TestSchema: Schema = new Schema({
@@ -21,11 +17,11 @@ const TestSchema: Schema = new Schema({
     duration: { type: Number, required: true },
     totalQuestions: { type: Number, required: true },
     difficulty: { type: String, enum: ['Easy', 'Medium', 'Hard', 'Mixed'], required: true },
-    questions: [{
-        question: { type: String, required: true },
-        options: { type: [String], required: true },
-        correctAnswer: { type: Number, required: true }
-    }]
+    questions: [{ type: Schema.Types.ObjectId, ref: 'Question' }]
 }, { timestamps: true });
+
+// Index for better query performance
+TestSchema.index({ subjectId: 1 });
+TestSchema.index({ difficulty: 1 });
 
 export default mongoose.model<ITest>('Test', TestSchema);

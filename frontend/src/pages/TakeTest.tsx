@@ -16,9 +16,15 @@ interface Test {
         name: string;
     };
     questions: {
+        _id: string;
         question: string;
         options: string[];
         correctAnswer: number;
+        explanation?: string;
+        difficulty?: string;
+        companies?: string[];
+        tags?: string[];
+        category?: string;
     }[];
 }
 
@@ -241,14 +247,51 @@ const TakeTest = () => {
                                                 <XCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
                                             )}
                                             <div className="flex-1">
-                                                <p className="font-medium text-gray-900 mb-2">Q{index + 1}: {q.question}</p>
-                                                <p className="text-sm text-gray-700">
+                                                <div className="flex items-start justify-between gap-2 mb-2">
+                                                    <p className="font-medium text-gray-900">Q{index + 1}: {q.question}</p>
+                                                    {q.difficulty && (
+                                                        <span className={clsx(
+                                                            "px-2 py-0.5 text-xs font-medium rounded flex-shrink-0",
+                                                            q.difficulty === 'Easy' ? 'bg-green-100 text-green-700' :
+                                                            q.difficulty === 'Medium' ? 'bg-yellow-100 text-yellow-700' :
+                                                            'bg-red-100 text-red-700'
+                                                        )}>
+                                                            {q.difficulty}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                
+                                                {q.companies && q.companies.length > 0 && (
+                                                    <div className="flex items-center gap-2 flex-wrap mb-2">
+                                                        <span className="text-xs text-gray-600">Asked by:</span>
+                                                        {q.companies.map((company, idx) => (
+                                                            <span
+                                                                key={idx}
+                                                                className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs font-medium rounded"
+                                                            >
+                                                                {company}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                                
+                                                <p className="text-sm text-gray-700 mb-1">
                                                     <span className="font-semibold">Your answer:</span> {userAnswer !== null ? q.options[userAnswer] : 'Not answered'}
                                                 </p>
                                                 {!isCorrect && (
-                                                    <p className="text-sm text-gray-700 mt-1">
+                                                    <p className="text-sm text-gray-700 mb-2">
                                                         <span className="font-semibold">Correct answer:</span> {q.options[q.correctAnswer]}
                                                     </p>
+                                                )}
+                                                
+                                                {q.explanation && (
+                                                    <div className={clsx(
+                                                        "mt-3 p-3 rounded text-sm",
+                                                        isCorrect ? "bg-green-100 border border-green-200" : "bg-red-100 border border-red-200"
+                                                    )}>
+                                                        <p className="font-semibold mb-1">Explanation:</p>
+                                                        <p className={isCorrect ? "text-green-800" : "text-red-800"}>{q.explanation}</p>
+                                                    </div>
                                                 )}
                                             </div>
                                         </div>
@@ -345,12 +388,45 @@ const TakeTest = () => {
                     <div className="p-8 max-w-4xl mx-auto">
                         <div className={themeClasses.card + ' p-8'}>
                             <div className="mb-6">
-                                <div className="text-sm text-gray-600 mb-2">
-                                    Question {currentQuestion + 1} of {test.totalQuestions}
+                                <div className="flex items-center justify-between mb-2">
+                                    <div className="text-sm text-gray-600">
+                                        Question {currentQuestion + 1} of {test.totalQuestions}
+                                    </div>
+                                    {question.difficulty && (
+                                        <span className={themeClasses.badge[question.difficulty.toLowerCase() as 'easy' | 'medium' | 'hard']}>
+                                            {question.difficulty}
+                                        </span>
+                                    )}
                                 </div>
-                                <h2 className="text-2xl font-bold text-gray-900 leading-relaxed">
+                                <h2 className="text-2xl font-bold text-gray-900 leading-relaxed mb-3">
                                     {question.question}
                                 </h2>
+                                {question.companies && question.companies.length > 0 && (
+                                    <div className="flex items-center gap-2 flex-wrap">
+                                        <span className="text-xs text-gray-500">Asked by:</span>
+                                        {question.companies.map((company, idx) => (
+                                            <span
+                                                key={idx}
+                                                className="px-2 py-1 bg-purple-50 text-purple-700 text-xs font-medium rounded border border-purple-200"
+                                            >
+                                                {company}
+                                            </span>
+                                        ))}
+                                    </div>
+                                )}
+                                {question.tags && question.tags.length > 0 && (
+                                    <div className="flex items-center gap-2 flex-wrap mt-2">
+                                        <span className="text-xs text-gray-500">Tags:</span>
+                                        {question.tags.map((tag, idx) => (
+                                            <span
+                                                key={idx}
+                                                className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded"
+                                            >
+                                                {tag}
+                                            </span>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
 
                             <div className="space-y-3 mb-8">
