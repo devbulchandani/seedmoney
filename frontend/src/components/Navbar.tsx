@@ -12,7 +12,7 @@ const Navbar = () => {
                         </div>
                         <div>
                             <h1 className="text-2xl font-bold text-gray-900">
-                                SeedMoney
+                                AcademicLearn
                             </h1>
                             <p className="text-xs text-gray-500 font-medium">Academic Platform</p>
                         </div>
