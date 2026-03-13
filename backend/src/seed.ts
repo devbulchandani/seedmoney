@@ -5,11 +5,11 @@ import Question from './models/Question';
 import Test from './models/Test';
 dotenv.config();
 
-const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://devbulchandani:kPZmr8LhcPCxfPdm@seedmoney.eamrqg3.mongodb.net/seedmoney_academics";
+const MONGO_URI = process.env.MONGO_URI;
 
 const seedData = async () => {
     try {
-            await mongoose.connect(MONGO_URI);
+            await mongoose.connect(MONGO_URI!);
             console.log('Connected to MongoDB for seeding questions and tests');
     
             // Clear existing questions and tests
