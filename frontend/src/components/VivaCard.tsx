@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { MessageCircleQuestion } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import clsx from 'clsx';
 
 interface VivaCardProps {
@@ -11,9 +11,9 @@ interface VivaCardProps {
 
 const VivaCard = ({ id, subjectId, question, difficulty }: VivaCardProps) => {
     const difficultyColors = {
-        Easy: 'bg-green-100 text-green-700 border-green-200',
-        Medium: 'bg-amber-100 text-amber-700 border-amber-200',
-        Hard: 'bg-red-100 text-red-700 border-red-200',
+        Easy: 'text-green-600 bg-green-50',
+        Medium: 'text-yellow-600 bg-yellow-50',
+        Hard: 'text-red-600 bg-red-50',
     };
 
     return (
@@ -21,26 +21,24 @@ const VivaCard = ({ id, subjectId, question, difficulty }: VivaCardProps) => {
             to={`/mcq/${id}?type=viva&subjectId=${subjectId}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="block bg-white rounded-2xl shadow-sm border border-gray-200 p-6 hover:shadow-lg hover:border-blue-400 transition-all group"
+            className="block bg-white border border-gray-200 rounded-sm shadow-sm p-4 hover:bg-gray-50 transition-colors group"
         >
-            <div className="flex items-start gap-4">
-                <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-blue-700 transition-colors">
-                    <MessageCircleQuestion className="w-5 h-5 text-white" />
-                </div>
+            <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-3">
+                    <div className="flex items-center gap-2 mb-2">
                         <span className={clsx(
-                            'px-3 py-1 text-xs font-bold rounded-full border',
+                            'px-2 py-0.5 text-xs font-medium rounded',
                             difficultyColors[difficulty]
                         )}>
                             {difficulty}
                         </span>
-                        <span className="px-3 py-1 text-xs font-bold rounded-full border bg-blue-100 text-blue-700 border-blue-200">
+                        <span className="px-2 py-0.5 text-xs font-medium rounded bg-blue-50 text-blue-600">
                             MCQ
                         </span>
                     </div>
-                    <p className="text-gray-800 leading-relaxed text-base group-hover:text-gray-900 line-clamp-2">
+                    <p className="text-[#2874A6] group-hover:underline line-clamp-2 flex items-center gap-1">
                         {question}
+                        <ChevronRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
                     </p>
                 </div>
             </div>

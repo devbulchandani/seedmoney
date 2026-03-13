@@ -4,6 +4,7 @@ import axios from 'axios';
 import { ArrowLeft, Loader2, Code2, FileText, ChevronLeft, ChevronRight } from 'lucide-react';
 import CodeEditor from '../components/CodeEditor';
 import clsx from 'clsx';
+import { theme } from '../theme';
 
 interface Practical {
     _id: string;
@@ -106,7 +107,7 @@ const PracticalIDE = () => {
                             <ArrowLeft className="w-5 h-5 text-gray-600" />
                         </Link>
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                            <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: theme.colors.primary }}>
                                 <Code2 className="w-6 h-6 text-white" />
                             </div>
                             <div>
