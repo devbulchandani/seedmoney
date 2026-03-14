@@ -11,6 +11,7 @@ interface Subject {
     description: string;
 }
 
+
 const Dashboard = () => {
     const [subjects, setSubjects] = useState<Subject[]>([]);
     const [loading, setLoading] = useState(true);
@@ -36,16 +37,25 @@ const Dashboard = () => {
         fetchSubjects();
     }, []);
 
-    const allSemesters = useMemo(() => {
-        const semesters = [...new Set(subjects.map(s => s.semester))];
-        return semesters.sort((a, b) => a - b);
-    }, [subjects]);
-
     const allCourses = useMemo(() => {
         const courses = new Set<string>();
         subjects.forEach(s => s.courses.forEach(c => courses.add(c)));
         return Array.from(courses).sort();
     }, [subjects]);
+
+    const alldepartments = useMemo(() => {
+        const departments = new Set<string>();
+        subjects.forEach(s => s.courses.forEach(c => departments.add(c)));
+        return Array.from(departments).sort();
+    }, [subjects]);
+
+    const allSemesters = useMemo(() => {
+        const semesters = [...new Set(subjects.map(s => s.semester))];
+        return semesters.sort((a, b) => a - b);
+    }, [subjects]);
+
+    
+
 
     const filteredSubjects = useMemo(() => {
         return subjects.filter(subject => {
@@ -122,6 +132,29 @@ const Dashboard = () => {
                                     </div>
 
                                     <select
+                                        value={selectedCourse ?? ''}
+                                        onChange={(e) => setSelectedCourse(e.target.value || null)}
+                                        className="px-3 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#2874A6] focus:border-[#2874A6] outline-none bg-white text-sm"
+                                    >
+                                        <option value="">All Courses</option>
+                                        {allCourses.map(course => (
+                                            <option key={course} value={course}>{course}</option>
+                                        ))}
+                                    </select>
+
+
+                                    <select
+                                        value={selectedCourse ?? ''}
+                                        onChange={(e) => setSelectedCourse(e.target.value || null)}
+                                        className="px-3 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#2874A6] focus:border-[#2874A6] outline-none bg-white text-sm"
+                                    >
+                                        <option value="">Branch</option>
+                                        {allCourses.map(course => (
+                                            <option key={course} value={course}>{course}</option>
+                                        ))}
+                                    </select>
+
+                                    <select
                                         value={selectedSemester ?? ''}
                                         onChange={(e) => setSelectedSemester(e.target.value ? Number(e.target.value) : null)}
                                         className="px-3 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#2874A6] focus:border-[#2874A6] outline-none bg-white text-sm"
@@ -132,16 +165,7 @@ const Dashboard = () => {
                                         ))}
                                     </select>
 
-                                    <select
-                                        value={selectedCourse ?? ''}
-                                        onChange={(e) => setSelectedCourse(e.target.value || null)}
-                                        className="px-3 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#2874A6] focus:border-[#2874A6] outline-none bg-white text-sm"
-                                    >
-                                        <option value="">All Courses</option>
-                                        {allCourses.map(course => (
-                                            <option key={course} value={course}>{course}</option>
-                                        ))}
-                                    </select>
+                
 
                                     {hasActiveFilters && (
                                         <button
