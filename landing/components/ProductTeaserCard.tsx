@@ -7,8 +7,6 @@ type ProductTeaserCardProps = {
   headline?: string
   subheadline?: string
   description?: string
-  videoSrc?: string
-  posterSrc?: string
   primaryButtonText?: string
   primaryButtonHref?: string
   secondaryButtonText?: string
@@ -23,8 +21,6 @@ export const ProductTeaserCard = (props: ProductTeaserCardProps) => {
     headline = "The Academic Platform for University Students",
     subheadline = "Virtual Lab connects students with practicals, coding exercises, study notes, and interview prep — all in one clean, minimalistic platform built for B.Tech, BCA, and B.Sc CS.",
     description = "Trusted by university students, Virtual Lab provides a full suite of academic tools — from an interactive IDE with real-time code execution to MCQ-based viva prep with instant feedback.",
-    videoSrc = "https://cdn.sanity.io/files/1t8iva7t/production/a2cbbed7c998cf93e7ecb6dae75bab42b13139c2.mp4",
-    posterSrc = "/images/design-mode/9ad78a5534a46e77bafe116ce1c38172c60dc21a-1069x1068.png",
     primaryButtonText = "Get Started",
     primaryButtonHref = "",
     secondaryButtonText = "View Docs",
