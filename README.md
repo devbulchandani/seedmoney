@@ -3,18 +3,18 @@
 SeedMoney is a modern university academic platform MVP built with the MERN stack (MongoDB, Express, React, Node.js). It provides a clean, minimalistic white-themed UI for students to view subjects, practicals, and notes.
 
 ## Tech Stack
-- **Frontend**: React, Vite, TypeScript, TailwindCSS (v4), React Router DOM, Axios
+- **virtual lab**: React, Vite, TypeScript, TailwindCSS (v4), React Router DOM, Axios
 - **Backend**: Node.js, Express, TypeScript, MongoDB (Mongoose)
 
 ## Architecture
-Three-tier architecture: Frontend (React) → Express API (Backend) → MongoDB
+Three-tier architecture: virtual lab (React) → Express API (Backend) → MongoDB
 
 ## Prerequisites
 - Node.js (v18+ recommended)
 
 ## Setup and Running the Project
 
-The project is structured as a monorepo with `frontend` and `backend` directories. You can manage everything from the root directory.
+The project is structured as a monorepo with `virtual lab` and `backend` directories. You can manage everything from the root directory.
 
 ### 1. Environment Variable Setup
 Before starting, ensure you have correctly configured the backend variables. Navigate to `/backend/.env` and insert your MongoDB URI and Piston API URL:
@@ -29,7 +29,7 @@ Note: The project uses Piston API for code execution. You can either:
 - Use a hosted Piston instance
 
 ### 2. Install Dependencies
-Run the following command at the root of the project to install all root, backend, and frontend dependencies automatically:
+Run the following command at the root of the project to install all root, backend, and virtual lab dependencies automatically:
 ```bash
 npm install
 ```
@@ -41,12 +41,12 @@ npm run seed
 ```
 
 ### 4. Run the Development Servers
-Start both the backend server and the frontend Vite dev server concurrently:
+Start both the backend server and the virtual lab Vite dev server concurrently:
 ```bash
 npm run dev
 ```
 
-- **Frontend Application**: `http://localhost:5173`
+- **virtual lab Application**: `http://localhost:5173`
 - **Backend API**: `http://localhost:5001`
 
 ## Features Included in Phase 1 & 2
